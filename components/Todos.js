@@ -7,8 +7,8 @@ class Todos extends Component {
         super(props)
         this.typing = this.typing.bind(this)
         this.enter = this.enter.bind(this)
+        this.click = this.click.bind(this)
         this.markDone = this.markDone.bind(this)
-
         this.state= {
             newTodo: '',
             todos: []
@@ -45,13 +45,29 @@ class Todos extends Component {
         todos:updatedTodos
     })
     }
+    click(e) {//for the button.  basically copied the input fields to puton
+
+           let updatedTodos = this.state.todos
+
+           updatedTodos.push({
+               text: e.target.value,
+               done: false
+           })
+
+           this.setState({
+               newTodo: '',
+               todos: updatedTodos
+           })
+}
     render(){
         var todoListOfComponents= this.state.todos.map((todoItem, i) => {
-            return <TodoItem item={todoItem} key={i} markDone={()=> this.markDone(i)} /> //i passed in the i, because i needed to know which item number in the array to be done. onClick is when it runs that code.  
+            return <TodoItem item={todoItem} key={i} markDone={()=> this.markDone(i)} /> //i passed in the i, because i needed to know which item number in the array to be done. onClick is when it runs that code.
         }) //this is mapping to rearray the items.  todoItem is an object. i is the index number.  number of loops it goes through. every component i.  item, key, markDone are properties = arbituary.
 
         return <div>
+
         <input type="text" className="form-control" placeholder="Never Ending Todos...." value={this.state.newTodo} onChange={this.typing} onKeyPress={this.enter}/>
+        <button type="button" value={this.state.newTodo} onClick={this.click} className="btn">Add</button>
         <div> {todoListOfComponents} </div>
         </div>
 

@@ -60,28 +60,12 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var todos = [];
-	//console.log(todos)
+	function renderView() {
+	    _reactDom2.default.render(_react2.default.createElement(_Todos2.default, null), document.getElementById('todos') //only use this at first for dom elements
+	    );
+	} //this kicks it off
 
-	document.getElementById('putOnList').addEventListener('keypress', enter);
-
-	document.getElementById('addButton').addEventListener('click', addToDo);
-
-	var addToDo = function addToDo() {
-	    var todoItem = document.getElementById('putOnList').value;
-	    todos.push(todoItem);
-	    document.getElementById('putOnList').value = '';
-	    renderView(todos);
-	};
-	function enter() {
-	    if (event.key === 'Enter') {
-	        addToDo();
-	    }
-	}
-
-	function renderView(todos) {
-	    _reactDom2.default.render(_react2.default.createElement(_Todos2.default, { data: todos }), document.getElementById('todos'));
-	}
+	renderView();
 
 /***/ },
 /* 1 */
@@ -21460,6 +21444,8 @@
 	    value: true
 	});
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -21470,37 +21456,125 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Todos = function Todos(props) {
-	    var items = props.data.map(function (item, i) {
-	        return _react2.default.createElement(_TodoItem2.default, { data: item, key: i });
-	    });
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	    return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	            'h5',
-	            null,
-	            'Walk the Dog'
-	        ),
-	        _react2.default.createElement(
-	            'h5',
-	            null,
-	            'Vaccum the floors'
-	        ),
-	        _react2.default.createElement(
-	            'h5',
-	            null,
-	            'Put away the dishes'
-	        ),
-	        _react2.default.createElement(
-	            'h5',
-	            null,
-	            'Study React!'
-	        ),
-	        items
-	    );
-	};
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	//importing the list item.  what we wrote.
+
+
+	var Todos = function (_Component) {
+	    _inherits(Todos, _Component);
+
+	    function Todos(props) {
+	        _classCallCheck(this, Todos);
+
+	        var _this = _possibleConstructorReturn(this, (Todos.__proto__ || Object.getPrototypeOf(Todos)).call(this, props));
+
+	        _this.typing = _this.typing.bind(_this);
+	        _this.enter = _this.enter.bind(_this);
+	        _this.click = _this.click.bind(_this);
+	        _this.markDone = _this.markDone.bind(_this);
+	        _this.state = {
+	            newTodo: '',
+	            todos: []
+	        };
+	        return _this;
+	    } //methods we build to bind on the constructor.  last is setting the intitial starting state.
+
+
+	    _createClass(Todos, [{
+	        key: 'typing',
+	        value: function typing(e) {
+	            this.setState({
+	                newTodo: e.target.value
+	            });
+	        } //tell react to setState newTodo
+
+	    }, {
+	        key: 'enter',
+	        value: function enter(e) {
+	            if (e.key === "Enter") {
+	                var updatedTodos = this.state.todos; //can't modify directly. this basically a copy.  mutating that let.  we have to do it like this in react.
+	                updatedTodos.push({
+	                    text: e.target.value,
+	                    done: false //tells us when the item is done
+	                });
+	                this.setState({
+	                    newTodo: '', //we don't have to copy this one.
+	                    todos: updatedTodos //need to make a new array to push it on
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'markDone',
+	        value: function markDone(currentTodoIndex) {
+	            var updatedTodos = this.state.todos;
+	            //updatedTodos[currentTodoIndex].done = !updatedTodos[currentTodoIndex].done //change the done property.  first is the path to get to the object and set it tup updated todos that are not done. toggling back and forth the true and false value
+	            if (updatedTodos[currentTodoIndex].done === false) {
+	                updatedTodos[currentTodoIndex].done = true;
+	            } else {
+	                updatedTodos[currentTodoIndex].done = false;
+	            }
+	            this.setState({
+	                todos: updatedTodos
+	            });
+	        }
+	    }, {
+	        key: 'click',
+	        value: function click(e) {
+	            //for the button.  basically copied the input fields to puton
+
+	            var updatedTodos = this.state.todos;
+
+	            updatedTodos.push({
+	                text: e.target.value,
+	                done: false
+	            });
+
+	            this.setState({
+	                newTodo: '',
+	                todos: updatedTodos
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+
+	            var todoListOfComponents = this.state.todos.map(function (todoItem, i) {
+	                return _react2.default.createElement(_TodoItem2.default, { item: todoItem, key: i, markDone: function markDone() {
+	                        return _this2.markDone(i);
+	                    } }); //i passed in the i, because i needed to know which item number in the array to be done. onClick is when it runs that code.
+	            }); //this is mapping to rearray the items.  todoItem is an object. i is the index number.  number of loops it goes through. every component i.  item, key, markDone are properties = arbituary.
+
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Never Ending Todos....', value: this.state.newTodo, onChange: this.typing, onKeyPress: this.enter }),
+	                _react2.default.createElement(
+	                    'button',
+	                    { type: 'button', value: this.state.newTodo, onClick: this.click, className: 'btn' },
+	                    'Add'
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    ' ',
+	                    todoListOfComponents,
+	                    ' '
+	                )
+	            );
+	        }
+	    }]);
+
+	    return Todos;
+	}(_react.Component); // component
+	/// have to have a render method.  and render has to return jsx code
+	/// any time set state happens. it reruns render
+
 	exports.default = Todos;
 
 /***/ },
@@ -21525,19 +21599,16 @@
 	        { className: "row" },
 	        _react2.default.createElement(
 	            "div",
-	            { className: "col-sm-12" },
+	            { className: "col-sm-12", onClick: props.markDone },
+	            _react2.default.createElement("input", { type: "checkbox", checked: props.item.done }),
 	            _react2.default.createElement(
-	                "div",
-	                null,
-	                _react2.default.createElement(
-	                    "h5",
-	                    null,
-	                    props.data
-	                )
+	                "span",
+	                { style: { textDecoration: props.item.done ? 'line-through' : '' } },
+	                props.item.text
 	            )
 	        )
 	    );
-	};
+	}; //item, key, markdone is an object that goes into this prop words.  props is an object.
 
 	exports.default = TodoItem;
 
